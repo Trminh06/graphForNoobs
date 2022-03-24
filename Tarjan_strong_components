@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define pb push_back
+const long maxn = 1e5+1;
+vector <long> a[maxn];
+long n,low[maxn],num[maxn],res = 0,cnt = 0;
+stack <long> st;
+void inp(){
+    long m,u,v;
+    cin >> n >> m;
+    while (m--){
+        cin >> u >> v;
+        a[u].pb(v);
+        //a[v].pb(u);
+    }
+}
+void Tarjan(long u){
+    low[u] = num[u] = ++cnt;
+    st.push(u);
+    for(auto v:a[u]){
+        if (num[v])
+            low[u] = min(low[u],num[v]);
+        else{
+            Tarjan(v);
+            low[u] = min(low[u],low[v]);
+        }
+    }
+    if (num[u] == low[u]){
+        long v;
+        res++;
+        do{
+            v = st.top();
+            st.pop();
+            low[v] = num[v] = LONG_MAX;
+            cout << v << " ";
+        }while (v != u);
+        cout << "\n";
+    }
+}
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    inp();
+    for(long i = 1; i <= n; ++i){
+        if (!num[i])
+            Tarjan(i);
+    }
+    //cout << res << "\n";
+    return 0;
+}
+
