@@ -47,6 +47,7 @@ int main(){
     }
     for(int i = 1; i <= n; ++i){
         vis[i] = false;
+        //a[i].size() & 1 means (a[i].size() % 2 != 0) ?
         if (a[i].size() & 1){
             cout << "IMPOSSIBLE";
             exit(0);
