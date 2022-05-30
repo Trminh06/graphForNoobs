@@ -6,7 +6,6 @@ typedef pair<int,int> ii;
 const int maxn = 1e3 + 1;
 const int oo = 1e9 + 7;
 int n, s, t, trace[maxn], c[maxn][maxn], f[maxn][maxn], d[maxn], ans = 0;
-vector <int> a[maxn];
 bool vis[maxn];
 bool bfs(){
     for(int i = 1; i <= n; ++i)
@@ -52,7 +51,6 @@ int main(){
     cin >> n >> m >> s >> t;
     while (m--){
         cin >> u >> v >> w;
-        a[u].push_back(v);
         c[u][v] = w;
     }
     for(int i = 1;  i <= n; ++i)
