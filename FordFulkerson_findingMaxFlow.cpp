@@ -6,26 +6,27 @@ typedef pair<int,int> ii;
 const int maxn = 1e3 + 1;
 const int oo = 1e9 + 7;
 int n, s, t, trace[maxn], c[maxn][maxn], f[maxn][maxn], d[maxn], ans = 0;
-bool vis[maxn];
+vector <int> a[maxn];
 bool bfs(){
     for(int i = 1; i <= n; ++i)
-        d[i] = vis[i] = 0;
-    queue <ii> q;
-    q.push({s, oo});
+        d[i] = trace[i] = 0;
+    queue <int> q;
+    q.push(s);
+    d[s] = 1;
     while (q.size()){
-        int u = q.front().fi;
-        int w = q.front().se;
-        vis[u] = true;
+        int u = q.front();
         q.pop();
-        for(int v = 1; v <= n; ++v){
-            if (!vis[v] && min(w, c[u][v] - f[u][v]) > d[v]){
-                d[v] = c[u][v] - f[u][v];
-                trace[v] = u;
-                q.push({v, d[v]});
-            }
+        for(int v : a[u]){
+            if (d[v] || f[u][v] >= c[u][v])
+                continue;
+            trace[v] = u;
+            d[v] = 1;
+            if (v == t)
+                return 1;
+            q.push(v);
         }
     }
-    return vis[t];
+    return trace[t];
 }
 void FordFulkerson(){
     int minn = oo;
@@ -52,11 +53,9 @@ int main(){
     while (m--){
         cin >> u >> v >> w;
         c[u][v] = w;
+        a[u].push_back(v);
+        a[v].push_back(u);
     }
-    for(int i = 1;  i <= n; ++i)
-        for(int j = 1; j <= n; ++j)
-            f[i][j] = 0;
-
     while (bfs())
         FordFulkerson();
 
