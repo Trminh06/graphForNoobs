@@ -1,4 +1,10 @@
 //TASK : https://codeforces.com/contest/342/problem/E
+/*---------------------------------------------------
+WARNING : the "total"
+because we are seeking for centroid of subtree so we CAN NOT take the general n/2 to check -> use the "total"
+in Centroid_Decompose() : init "total" = 0;
+in dfs_size() : total++; and check for total / 2
+---------------------------------------------------*/
 #include <bits/stdc++.h>
 using namespace std;
 #define fi first
