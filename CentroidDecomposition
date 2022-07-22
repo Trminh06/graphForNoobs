@@ -1,0 +1,137 @@
+//TASK : https://codeforces.com/contest/342/problem/E
+#include <bits/stdc++.h>
+using namespace std;
+#define fi first
+#define se second
+#define pb push_back
+#define TASK
+typedef long long ll;
+const int LOG = 20;
+const int maxn = 1e5 + 1;
+int n, par[maxn][LOG], high[maxn], sz[maxn], daddy[maxn], ans[maxn], total = 0;
+set <int> a[maxn];
+template <typename T1, typename T2> bool mini(T1 &a, T2 b){
+    if (a > b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+template <typename T1, typename T2> bool maxi(T1 &a, T2 b){
+    if (a < b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+
+void dfs(int u){
+    for(set <int>::iterator it = a[u].begin(); it != a[u].end(); ++it){
+        int v = *it;
+        if (v != par[u][0]){
+            high[v] = high[u] + 1;
+            par[v][0] = u;
+            dfs(v);
+        }
+    }
+}
+
+int LCA(int u, int v){
+    if (high[u] > high[v])
+        return LCA(v, u);
+    for(int i = LOG - 1; i >= 0; --i)
+        if (high[par[v][i]] >= high[u])
+            v = par[v][i];
+    if (u == v)
+        return u;
+    for(int i = LOG - 1; i >= 0; --i)
+        if (par[u][i] != par[v][i]){
+            u = par[u][i];
+            v = par[v][i];
+        }
+    return par[u][0];
+}
+
+int dfs_size(int u, int p){
+    sz[u] = 1;
+    total++;
+    for(set <int>::iterator it = a[u].begin(); it != a[u].end(); ++it){
+        int v = *it;
+        if (v != p)
+            sz[u] += dfs_size(v, u);
+    }
+    return sz[u];
+}
+
+int findCentroid(int u, int p){
+    for(set <int>::iterator it = a[u].begin(); it != a[u].end(); ++it){
+        int v = *it;
+        if (v != p && sz[v] * 2 > total)
+            return findCentroid(v, u);
+    }
+    return u;
+}
+
+void Centroid_Decompose(int u, int p){
+    total = 0;
+    dfs_size(u, u);
+    int centroid = findCentroid(u, u);
+    if (!p)
+        p = centroid;
+    daddy[centroid] = p;
+    for(set <int>::iterator it = a[centroid].begin(); it != a[centroid].end(); ++it){
+        int v = *it;
+        a[v].erase(centroid);
+        Centroid_Decompose(v, centroid);
+    }
+    a[centroid].clear();
+}
+
+void update(int u){
+    int x = u;
+    while (1){
+        mini(ans[x], high[u] + high[x] - 2 * high[LCA(x, u)]);
+        if (x == daddy[x])
+            break;
+        x = daddy[x];
+    }
+}
+
+int findAns(int u){
+    int res = maxn + 69, x = u;
+    while (1){
+        mini(res, high[u] + high[x] - 2 * high[LCA(u, x)] + ans[x]);
+        if (x == daddy[x])
+            break;
+        x = daddy[x];
+    }
+    return res;
+}
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int m, u, v;
+    cin >> n >> m;
+    for(int i = 1; i < n; ++i){
+        cin >> u >> v;
+        a[u].insert(v);
+        a[v].insert(u);
+    }
+    high[0] = -1;
+    dfs(1);
+    Centroid_Decompose(1, 0);
+    for(int j = 1; j < LOG; ++j)
+        for(int i = 1; i <= n; ++i)
+            par[i][j] = par[par[i][j - 1]][j - 1];
+    for(int i = 1; i <= n; ++i)
+        ans[i] = maxn + 69;
+    update(1);
+    while (m--){
+        cin >> u >> v;
+        if (u & 1)
+            update(v);
+        else
+            cout << findAns(v) << "\n";
+    }
+    return 0;
+}
