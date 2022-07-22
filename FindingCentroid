@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define fi first
+#define se second
+#define pb push_back
+#define TASK
+typedef long long ll;
+const int maxn = 2e5 + 1;
+int n, sz[maxn];
+vector <int> a[maxn];
+template <typename T1, typename T2> bool mini(T1 &a, T2 b){
+    if (a > b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+template <typename T1, typename T2> bool maxi(T1 &a, T2 b){
+    if (a < b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+int dfs(int u, int p){
+    sz[u] = 1;
+    for(int v : a[u])
+        if (v != p)
+            sz[u] += dfs(v, u);
+    return sz[u];
+}
+int findAns(int u, int p){
+    for(int v : a[u])
+        if (v != p && sz[v] * 2 > n)
+            return findAns(v, u);
+    return u;
+}
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int u, v;
+    cin >> n;
+    for(int i = 1; i < n; ++i){
+        cin >> u >> v;
+        a[u].pb(v);
+        a[v].pb(u);
+    }
+    dfs(1, 1);
+    cout << findAns(1, 1);
+    return 0;
+}
