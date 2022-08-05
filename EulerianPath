@@ -1,0 +1,98 @@
+//TASK : https://cses.fi/problemset/task/1693/
+//this code is used for DIRECTED GRAPH
+
+#include <bits/stdc++.h>
+using namespace std;
+#define fi first
+#define se second
+#define pb push_back
+#define TASK ""
+#define BIT(x, i) ((x) & (1 << i))
+#define MASK(x) (1LL << (x))
+typedef long long ll;
+const int maxn = 1e5 + 1;
+int n, indeg[maxn], outdeg[maxn], s;
+bool vis[maxn << 1], N;
+vector <pair<int, int>> a[maxn];
+stack <int> ans;
+template <typename T1, typename T2> bool maxi(T1 &a, T2 b){
+    if (a < b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+template <typename T1, typename T2> bool mini(T1 &a, T2 b){
+    if (a > b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+
+void checkEuler(){
+    bool ok = 0, exist = 0;
+    for(int i = 1; i <= n; ++i){
+        outdeg[i] = a[i].size();
+        for(auto j : a[i])
+            indeg[j.fi]++;
+    }
+    for(int i = 1; i <= n; ++i){
+        if (outdeg[i] - indeg[i] == 1)
+            if (!s)
+                s = i;
+            else{
+                ok = 1;
+                break;
+            }
+        if (outdeg[i] - indeg[i] == -1)
+            if (!exist)
+                exist = 1;
+            else{
+                ok = 1;
+                break;
+            }
+        if (abs(outdeg[i] - indeg[i]) > 1){
+            ok = 1;
+            break;
+        }
+    }
+    if (ok){
+        cout << "IMPOSSIBLE";
+        exit(0);
+    }
+}
+
+void findEuler(int u){
+    while (a[u].size()){
+        auto i = a[u].back();
+        a[u].pop_back();
+        int v = i.fi;
+        int num = i.se;
+        if (!vis[num])
+            findEuler(v);
+    }
+    if (u == n)
+        N = 1;
+    ans.push(u);
+}
+
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int m, u, v;
+    cin >> n >> m;
+    for(int i = 0; i < m; ++i){
+        cin >> u >> v;
+        a[u].pb({v, i});
+    }
+    checkEuler();
+    findEuler(s);
+    if (ans.size() != m + 1 || !N)
+        return cout << "IMPOSSIBLE", 0;
+    while (ans.size()){
+        cout << ans.top() << " ";
+        ans.pop();
+    }
+    return 0;
+}
