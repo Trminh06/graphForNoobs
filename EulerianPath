@@ -1,5 +1,6 @@
 //TASK : https://cses.fi/problemset/task/1693/
 //this code is used for DIRECTED GRAPH
+//FOCUS : cuz this is an directed graph so every edge has distinct #, however; if we consider a undirected graph, we should check for vis[#edge]
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -12,7 +13,7 @@ using namespace std;
 typedef long long ll;
 const int maxn = 1e5 + 1;
 int n, indeg[maxn], outdeg[maxn], s;
-bool vis[maxn << 1], N;
+bool N;
 vector <pair<int, int>> a[maxn];
 stack <int> ans;
 template <typename T1, typename T2> bool maxi(T1 &a, T2 b){
@@ -69,8 +70,7 @@ void findEuler(int u){
         a[u].pop_back();
         int v = i.fi;
         int num = i.se;
-        if (!vis[num])
-            findEuler(v);
+        findEuler(v);
     }
     if (u == n)
         N = 1;
