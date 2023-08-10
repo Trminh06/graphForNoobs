@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define fi first
+#define se second
+#define pb push_back
+#define TASK ""
+#define BIT(x, i) (x & (1 << i))
+#define MASK(x) (1 << (x))
+#define all(x) (x).begin(), (x).end()
+typedef long long ll;
+const int maxn = 5e5 + 3;
+vector <int> a[maxn];
+int n, in[maxn], out[maxn], cnt;
+template <typename T1, typename T2> bool mini(T1 &a, T2 b){
+    if (a > b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+template <typename T1, typename T2> bool maxi(T1 &a, T2 b){
+    if (a < b)
+        a = b;
+    else
+        return 0;
+    return 1;
+}
+
+void eulerTour(int u, int p){
+    in[u] = ++cnt;
+    for(int v : a[u])
+        if (v != p)
+            eulerTour(v, u);
+    out[u] = cnt;
+}
+
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+//    freopen(TASK".inp", "r", stdin);
+//    freopen(TASK".out", "w", stdout);
+    cin >> n;
+    for(int i = 1; i < n; ++i){
+        cin >> c >> v;
+        a[c].pb(v);
+        a[v].pb(c);
+    }
+    eulerTour(1, 1);
+    for(int i = 1; i <= n; ++i)
+        cout << in[i] << " " << out[i] << "\n";
+    return 0;
+}
